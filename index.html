@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>داشبورد رحیم</title>
+<title>داشبورد پیشرفته </title>
 <style>
 body{background:#101827;color:white;font-family:tahoma;margin:0;padding:15px;line-height:2}
 main{max-width:800px;margin:auto}
@@ -19,7 +19,7 @@ textarea{width:95%;height:90px;background:#0f172a;color:white}
 </head>
 <body>
 <main>
-<h1>🚀 داشبورد پیشرفت رحیم</h1>
+<h1>🚀 داشبورد پیشرفت </h1>
 <p>هر روز یک قدم به هدفت نزدیک‌تر شو!</p>
 
 <div class="card">
@@ -125,7 +125,7 @@ render();
 function report(){
 const done=tasks.filter(t=>t.done).map(t=>"✅ "+t.text).join("\n")||"موردی نیست";
 const pending=tasks.filter(t=>!t.done).map(t=>"⬜"+t.text).join("\n")||"موردی نیست";
-const out="گزارش روزانه رحیم\nتاریخ: "+new Date().toLocaleDateString("fa-IR")+
+const out="گزارش روزانه \nتاریخ: "+new Date().toLocaleDateString("fa-IR")+
 "\n\nانجام‌شده:\n"+done+"\n\nانجام‌نشده:\n"+pending+
 "\n\nتمرین پایتون: "+document.getElementById("python").value+" دقیقه"+
 "\nروز دوره ترید: "+document.getElementById("tradeDay").value+
