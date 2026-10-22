@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>داشبورد رحیم</title>
+<style>
+body{background:#101827;color:white;font-family:tahoma;margin:0;padding:15px;line-height:2}
+main{max-width:800px;margin:auto}
+.card{background:#1e293b;padding:18px;border-radius:14px;margin:15px 0}
+h1,h2{color:#67e8f9}
+button{background:#0891b2;color:white;border:0;border-radius:7px;padding:10px;margin:5px;cursor:pointer}
+input,textarea{padding:8px;max-width:95%}
+textarea{width:95%;height:90px;background:#0f172a;color:white}
+.task{padding:8px;border-bottom:1px solid #475569}
+#bar{height:12px;background:#22c55e;width:0%;border-radius:10px}
+.track{background:#475569;border-radius:10px}
+</style>
+</head>
+<body>
+<main>
+<h1>🚀 داشبورد پیشرفت رحیم</h1>
+<p>هر روز یک قدم به هدفت نزدیک‌تر شو!</p>
+
+<div class="card">
+<h2>📊 پیشرفت امروز</h2>
+<div id="count">۰٪</div>
+<div class="track"><div id="bar"></div></div>
+</div>
+
+<div class="card">
+<h2>📅 برنامه روزانه</h2>
+<div id="tasks"></div>
+<input id="newTask" placeholder="کار جدید">
+<button onclick="addTask()">افزودن کار</button>
+</div>
+
+<div class="card">
+<h2>🐍 پایتون</h2>
+<p>امروز چند دقیقه تمرین کردی؟</p>
+<input id="python" type="number" min="0" placeholder="دقیقه">
+</div>
+
+<div class="card">
+<h2>📈 آموزش ترید</h2>
+<p>روز دوره (۱ تا ۲۱)</p>
+<input id="tradeDay" type="number" min="1" max="21" value="1">
+<p><label><input id="demo" type="checkbox"> تمرین حساب دمو انجام شد</label></p>
+<p>فعلاً فقط دمو؛ نه پول واقعی و نه اهرم بالا.</p>
+</div>
+
+<div class="card">
+<h2>💰 هدف درآمد و خرید ماشین</h2>
+<p>هدف پس‌انداز (تومان)</p>
+<input id="goal" type="number" value="100000000">
+<p>پس‌انداز فعلی (تومان)</p>
+<input id="saved" type="number" value="0">
+</div>
+
+<div class="card">
+<h2>📝 گزارش امروز</h2>
+<textarea id="notes" placeholder="چه یاد گرفتی؟ چه کاری انجام نشد و چرا؟"></textarea>
+<br>
+<button onclick="save()">💾 ذخیره اطلاعات</button>
+<button onclick="report()">📋 ساخت گزارش</button>
+<textarea id="output" placeholder="گزارش آماده می‌شود"></textarea>
+</div>
+</main>
+
+<script>
+const defaults=[
+"برنامه‌ریزی روز",
+"تمرین پایتون",
+"مطالعه ترید",
+"تمرین ترید دمو",
+"جست‌وجوی کار یا ساخت نمونه‌کار",
+"بررسی پس‌انداز"
+];
+let tasks;
+try{tasks=JSON.parse(localStorage.getItem("rahimTasks"))}catch(e){}
+if(!Array.isArray(tasks))tasks=defaults.map(text=>({text,done:false}));
+
+function render(){
+const box=document.getElementById("tasks");
+box.innerHTML="";
+tasks.forEach((t,i)=>{
+const row=document.createElement("div");
+row.className="task";
+const cb=document.createElement("input");
+cb.type="checkbox";cb.checked=t.done;
+cb.onchange=()=>{tasks[i].done=cb.checked;render();save(false)};
+const label=document.createElement("span");
+label.textContent=" "+t.text+" ";
+const del=document.createElement("button");
+del.textContent="حذف";
+del.onclick=()=>{tasks.splice(i,1);render();save(false)};
+row.append(cb,label,del);box.append(row);
+});
+const done=tasks.filter(t=>t.done).length;
+const pct=tasks.length?Math.round(done/tasks.length*100):0;
+document.getElementById("count").textContent=done+" از "+tasks.length+" کار ("+pct+"٪)";
+document.getElementById("bar").style.width=pct+"%";
+}
+function addTask(){
+const el=document.getElementById("newTask");
+if(el.value.trim()){tasks.push({text:el.value.trim(),done:false});el.value="";render();save(false)}
+}
+function save(show=true){
+localStorage.setItem("rahimTasks",JSON.stringify(tasks));
+["python","tradeDay","demo","goal","saved","notes"].forEach(id=>{
+const el=document.getElementById(id);
+localStorage.setItem("rahim_"+id,el.type==="checkbox"?el.checked:el.value);
+});
+render();
+if(show)alert("ذخیره شد ✅");
+}
+function load(){
+["python","tradeDay","demo","goal","saved","notes"].forEach(id=>{
+const v=localStorage.getItem("rahim_"+id);
+const el=document.getElementById(id);
+if(v!==null){if(el.type==="checkbox")el.checked=v==="true";else el.value=v}
+});
+render();
+}
+function report(){
+const done=tasks.filter(t=>t.done).map(t=>"✅ "+t.text).join("\n")||"موردی نیست";
+const pending=tasks.filter(t=>!t.done).map(t=>"⬜"+t.text).join("\n")||"موردی نیست";
+const out="گزارش روزانه رحیم\nتاریخ: "+new Date().toLocaleDateString("fa-IR")+
+"\n\nانجام‌شده:\n"+done+"\n\nانجام‌نشده:\n"+pending+
+"\n\nتمرین پایتون: "+document.getElementById("python").value+" دقیقه"+
+"\nروز دوره ترید: "+document.getElementById("tradeDay").value+
+"\nتمرین دمو: "+(document.getElementById("demo").checked?"بله":"خیر")+
+"\nپس‌انداز: "+document.getElementById("saved").value+" تومان"+
+"\nیادداشت: "+document.getElementById("notes").value;
+document.getElementById("output").value=out;
+}
+load();
+</script>
+</body>
+</html>
